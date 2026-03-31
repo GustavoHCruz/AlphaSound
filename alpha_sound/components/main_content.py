@@ -2,14 +2,12 @@ from alpha_sound.components.empty_state import empty_state
 from alpha_sound.state.app_state import AppState
 import reflex as rx
 
-def main_content():
+def main_content() -> rx.Component:
 	return rx.cond(
-		AppState.sessions.length() == 0,
+		AppState.sessions.length() == 0, # type: ignore
 
-		# estado vazio
 		empty_state(),
 
-		# conteúdo normal
 		rx.box(
 			rx.audio(
 				src="",

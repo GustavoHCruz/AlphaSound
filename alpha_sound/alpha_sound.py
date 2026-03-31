@@ -3,7 +3,8 @@ from alpha_sound.pages.home import home
 
 app = rx.App(
 	style={
-		"background": "#f8fafc"
+		"background": "#f8fafc",
+		"color": "#0f172a"
 	},
 	theme=rx.theme(
 		appearance="light",
@@ -13,4 +14,4 @@ app = rx.App(
 	)
 )
 
-app.add_page(home, route="/")
+app.add_page(home, route="/", title="Alpha Sound | Home")

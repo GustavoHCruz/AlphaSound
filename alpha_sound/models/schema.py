@@ -1,6 +1,16 @@
-from pydantic import BaseModel, Field
-from uuid import uuid4
+from pydantic import BaseModel
+from datetime import datetime
+
+class Segment(BaseModel):
+	id: str
+	text: str
+	start: float
+	end: float
+	audio_path: str
+	description: str = ""
 
 class Session(BaseModel):
-	id: str = Field(default_factory=lambda: str(uuid4()))
-	filename: str
+	id: str
+	session_name: str
+	date: datetime
+	segments: list[Segment]

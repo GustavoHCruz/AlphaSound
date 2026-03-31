@@ -1,10 +1,19 @@
 import reflex as rx
+from reflex.components.radix.themes.components.button import Button
 from reflex.components.radix.themes.layout.box import Box
 from alpha_sound.state.app_state import AppState
 
-def toggle_button():
+def toggle_button() -> Button:
 	return rx.button(
-		rx.icon("menu", size=20),
+		rx.icon(
+			"menu",
+			size=20,
+			color=rx.cond(
+				AppState.is_sidebar_open,
+				"white",
+				"black"
+			)
+		),
 		on_click=AppState.toggle_sidebar,
 
 		position="fixed",
@@ -12,37 +21,24 @@ def toggle_button():
 		left="12px",
 		z_index="1100",
 
-		background=rx.cond(
-			AppState.is_sidebar_open,
-			"rgba(255,255,255,0.05)",
-			"rgba(0,0,0,0.05)"
-		),
-
-		color=rx.cond(
-			AppState.is_sidebar_open,
-			"white",
-			"black"
-		),
+		variant="ghost",
 
 		border=rx.cond(
 			AppState.is_sidebar_open,
-			"1px solid rgba(255,255,255,0.3)",
-			"1px solid rgba(0,0,0,0.2)"
+			"1px solid white",
+			"1px solid black"
 		),
 
-		box_shadow="0 2px 8px rgba(0,0,0,0.15)",
-		backdrop_filter="blur(6px)",
 		border_radius="10px",
-
 		padding="6px 10px",
 
-		_hover={
-			"background": rx.cond(
-				AppState.is_sidebar_open,
-				"rgba(255,255,255,0.15)",
-				"rgba(0,0,0,0.08)"
-			)
-		},
+		box_shadow="0 2px 8px rgba(0,0,0,0.15)",
+
+		_hover=rx.cond(
+			AppState.is_sidebar_open,
+			{"background": "1px solid white"},
+			{"background": "1px solid black"}
+		),
 
 		transition="all 0.2s ease"
 	)
@@ -55,7 +51,7 @@ def sidebar() -> Box:
 			rx.foreach(
 				AppState.sessions,
 				lambda session: rx.button(
-					session.filename,
+					session.session_name,
 					on_click=AppState.set_session(session.id)
 				)
 			),
