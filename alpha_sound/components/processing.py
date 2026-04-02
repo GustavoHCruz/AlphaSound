@@ -12,7 +12,7 @@ def processing_overlay() -> rx.Component:
 				rx.text(UploadState.current_step),
 
 				rx.progress(
-					value=(UploadState.progress * 100).to(int),
+					value=(UploadState.progress * 100).to(int), # type: ignore
 					width="300px"
 				),
 
