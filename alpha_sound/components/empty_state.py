@@ -31,10 +31,7 @@ def empty_state() -> VStack:
 			),
 			id="upload_audio",
 
-			on_drop=UploadState.handle_upload(
-				rx.upload_files("upload_audio")
-			),
-
+			on_drop=UploadState.handle_upload,
 
 			border="1px dashed var(--gray-6)",
 			padding="2em",

@@ -20,23 +20,32 @@ def save_file(data: bytes, filename: str) -> str:
 
 class UploadState(rx.State):
 	is_processing: bool = False
+	progress: float = 0.0
+	current_step: str = ""
 
 	@rx.event
-	async def handle_upload(self, files: list[rx.UploadFile]):
+	async def handle_upload(self, files: list[rx.UploadFile]) -> None:
 		self.is_processing = True
+		self.progress = 0
+		self.current_step = "Uploading..."
 
-		for file in files:
-			data = await file.read()
+		try:
+			for file in files:
+				data = await file.read()
 
-			if not file.filename:
-				raise ValueError("Something went wrong...")
-			file_path = save_file(data, file.filename)
+				self.current_step = "Saving file..."
 
-			raw_segments = list(transcribe_audio(file_path))
+				file_path = save_file(data, file.filename or "")
 
-			session = build_session(file_path, raw_segments)
+				self.current_step = "Transcribing..."
 
-			AppState.sessions.append(session)
-			self.current_session_id = session.id
+				segments = list(transcribe_audio(file_path))
 
-		self.is_processing = False
+				total = len(segments)
+
+				for i, _ in enumerate(segments):
+					self.progress = (i + 1) / total
+					self.current_step = f"Processing segment {i+1}/{total}"
+
+		finally:
+			self.is_processing = False

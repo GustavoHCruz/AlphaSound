@@ -16,6 +16,7 @@ def overlay() -> rx.Component:
 			height="100vh",
 			background="transparent",
 			z_index="900",
+			pointer_events="none"
 		),
 		rx.fragment(),
 	)
@@ -34,8 +35,8 @@ def container(content: rx.Component) -> Box:
 
 def app_layout(content: rx.Component) -> Box:
 	return rx.box(
-		toggle_button(),
 		sidebar(),
+		toggle_button(),
 		overlay(),
 
 		rx.flex(

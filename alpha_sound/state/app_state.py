@@ -21,3 +21,10 @@ class AppState(rx.State):
 		session_id: str
 	) -> None:
 		self.current_session_id = session_id
+	
+	@rx.event
+	def set_note(self, segment_id: str, value: str) -> None:
+		if self.current_session_id not in self.notes:
+			self.notes[self.current_session_id] = {}
+
+		self.notes[self.current_session_id][segment_id] = value
