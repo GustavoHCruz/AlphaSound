@@ -1,5 +1,5 @@
 import reflex as rx
-from alpha_sound.pages.home import home
+from alpha_sound.pages.home import index
 
 app = rx.App(
 	style={
@@ -14,4 +14,4 @@ app = rx.App(
 	)
 )
 
-app.add_page(home, route="/", title="Alpha Sound | Home")
+app.add_page(index, title="Alpha Sound | Home")

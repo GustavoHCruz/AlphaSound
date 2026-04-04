@@ -9,9 +9,23 @@ from alpha_sound.functions.audio_generator import cut_audio
 
 def save_session_csv(
 	session: Session,
-	path: str
+	sessions_path: str,
+	segments_path: str
 ) -> None:
-	with open(path, "w", newline="", encoding="utf-8") as f:
+	with open(sessions_path, "w", newline="", encoding="utf-8") as f:
+		writer = csv.writer(f)
+
+		writer.writerow([
+			"id", "name", "date", "segments"
+		])
+
+		writer.writerow([
+			session.id,
+			session.date,
+			session.name
+		])
+
+	with open(segments_path, "w", newline="", encoding="utf-8") as f:
 		writer = csv.writer(f)
 
 		writer.writerow([
@@ -54,14 +68,54 @@ def build_session(
 
 	session = Session(
 		id=str(uuid4()),
-		session_name=datetime.now().strftime("%Y-%m-%d %H:%M"),
+		name=datetime.now().strftime("%Y-%m-%d %H:%M"),
 		date=datetime.now(),
 		segments=segments
 	)
 
 	save_session_csv(
 		session=session,
-		path="./data/sessions.csv"
+		sessions_path="./data/sessions.csv",
+		segments_path="./data/segments.csv"
 	)
 
 	return session
+
+def save_all_sessions(
+	sessions: list[Session],
+	sessions_path: str,
+	segments_path: str
+) -> None:
+
+	# 🔹 salvar sessions
+	with open(sessions_path, "w", newline="", encoding="utf-8") as f:
+		writer = csv.writer(f)
+
+		writer.writerow(["id", "name", "date"])
+
+		for s in sessions:
+			writer.writerow([
+				s.id,
+				s.name,
+				s.date.isoformat()
+			])
+
+	with open(segments_path, "w", newline="", encoding="utf-8") as f:
+		writer = csv.writer(f)
+
+		writer.writerow([
+			"session_id", "segment_id", "text",
+			"start", "end", "audio_path", "description"
+		])
+
+		for s in sessions:
+			for seg in s.segments:
+				writer.writerow([
+					s.id,
+					seg.id,
+					seg.text,
+					seg.start,
+					seg.end,
+					seg.audio_path,
+					seg.description
+				])

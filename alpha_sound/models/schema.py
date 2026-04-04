@@ -11,9 +11,9 @@ class Segment(BaseModel):
 
 class Session(BaseModel):
 	id: str
-	session_name: str
+	name: str
 	date: datetime
-	segments: list[Segment]
+	segments: list[Segment] = []
 
 class TranscriptionSegment(BaseModel):
 	text: str

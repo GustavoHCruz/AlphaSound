@@ -7,9 +7,10 @@ from alpha_sound.components.processing import processing_overlay
 from alpha_sound.state.app_state import AppState
 
 @rx.page(on_load=AppState.load_sessions)
-def home() -> Box:
+def index() -> Box:
 	return app_layout(
 		rx.box(
+			rx.text(AppState.current_session_id),
 			main_content(),
 			processing_overlay()
 		)

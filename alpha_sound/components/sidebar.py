@@ -51,7 +51,7 @@ def sidebar() -> Box:
 			rx.foreach(
 				AppState.sessions,
 				lambda session: rx.button(
-					session.session_name,
+					session.name,
 					on_click=AppState.set_session(session.id)
 				)
 			),
