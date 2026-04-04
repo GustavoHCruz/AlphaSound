@@ -14,3 +14,8 @@ class Session(BaseModel):
 	session_name: str
 	date: datetime
 	segments: list[Segment]
+
+class TranscriptionSegment(BaseModel):
+	text: str
+	start: float
+	end: float

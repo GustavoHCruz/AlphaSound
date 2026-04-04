@@ -1,6 +1,7 @@
 import reflex as rx
 from alpha_sound.configs.paths import UPLOAD_DIR
-from alpha_sound.services.transcriber import transcribe_audio
+from alpha_sound.models.schema import TranscriptionSegment
+from alpha_sound.functions.transcriber import transcribe_audio
 from alpha_sound.services.audio_service import build_session
 from alpha_sound.state.app_state import AppState
 
@@ -29,23 +30,25 @@ class UploadState(rx.State):
 		self.progress = 0
 		self.current_step = "Uploading..."
 
-		try:
-			for file in files:
-				data = await file.read()
+		for file in files:
+			data = await file.read()
 
-				self.current_step = "Saving file..."
+			self.current_step = "Saving file..."
 
-				file_path = save_file(data, file.filename or "")
+			file_path = save_file(data, file.filename or "")
 
-				self.current_step = "Transcribing..."
+			self.current_step = "Transcribing..."
 
-				segments = list(transcribe_audio(file_path))
+			segments_it = transcribe_audio(file_path)
 
-				total = len(segments)
+			segments: list[TranscriptionSegment] = []
+			for segment in segments_it:
+				segments.append(segment)
 
-				for i, _ in enumerate(segments):
-					self.progress = (i + 1) / total
-					self.current_step = f"Processing segment {i+1}/{total}"
+			session = build_session(file_path, segments)
 
-		finally:
-			self.is_processing = False
+			AppState.add_session(
+				session
+			)
+
+		self.is_processing = False
