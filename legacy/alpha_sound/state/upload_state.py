@@ -1,7 +1,7 @@
 import reflex as rx
 from alpha_sound.configs.paths import UPLOAD_DIR
 from alpha_sound.models.schema import TranscriptionSegment
-from alpha_sound.functions.transcriber import group_segments, transcribe_audio
+from apps.transcriber.transcriber import group_segments, transcribe_audio
 from alpha_sound.services.audio_service import build_session
 from alpha_sound.state.app_state import AppState
 
