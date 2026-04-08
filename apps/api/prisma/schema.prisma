@@ -1,0 +1,38 @@
+generator client {
+  provider	= "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+	url      = env("DATABASE_URL")
+}
+
+model User {
+	id        String    @id @default(uuid())
+	name      String
+	email     String    @unique
+	sessions  Session[]
+
+	createdAt DateTime  @default(now())
+}
+
+model Session {
+	id         String    @id @default(uuid())
+	audioPath  String
+	createdAt  DateTime  @default(now())
+
+	userId     String
+	user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+	segments   Segment[]
+}
+
+model Segment {
+	id        String   @id @default(uuid())
+	start     Float
+	end       Float
+	text      String
+
+	sessionId String
+	session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
