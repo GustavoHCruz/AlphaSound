@@ -24,7 +24,8 @@
     "paths": {
       "@resources/*": ["resources/*"],
       "@prisma/*": ["prisma/*"],
-      "@config/*": ["config/*"]
+      "@config/*": ["config/*"],
+      "@utils/*": ["utils/*"]
     }
   }
 }
