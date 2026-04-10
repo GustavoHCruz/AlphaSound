@@ -17,13 +17,14 @@ CREATE TABLE "AudioSession" (
 );
 
 -- CreateTable
-CREATE TABLE "Segment" (
+CREATE TABLE "AudioSegment" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "start" REAL NOT NULL,
     "end" REAL NOT NULL,
     "text" TEXT NOT NULL,
+    "transcription" TEXT NOT NULL,
     "sessionId" TEXT NOT NULL,
-    CONSTRAINT "Segment_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "AudioSession" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "AudioSegment_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "AudioSession" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex

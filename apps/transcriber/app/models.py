@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class TranscriptionSegment(BaseModel):
-	text: str
+	transcription: str
 	start: float
 	end: float
 

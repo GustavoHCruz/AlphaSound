@@ -20,7 +20,7 @@ def transcribe_audio(audio_path: str) -> Iterator[TranscriptionSegment]:
 
 	for segment in segments:
 		yield TranscriptionSegment(
-			text=segment.text.strip(),
+			transcription=segment.text.strip(),
 			start=segment.start,
 			end=segment.end
 		)
@@ -48,7 +48,7 @@ def group_segments(
 		if (
 			duration > max_duration
 			or gap > max_gap
-			or current[-1].text.endswith((".", "!", "?"))
+			or current[-1].transcription.endswith((".", "!", "?"))
 		):
 			grouped.append(_merge(current))
 			current = [seg]
@@ -64,7 +64,7 @@ def group_segments(
 
 def _merge(segments: List[TranscriptionSegment]) -> TranscriptionSegment:
 	return TranscriptionSegment(
-		text=" ".join(s.text for s in segments),
+		transcription=" ".join(s.transcription for s in segments),
 		start=segments[0].start,
 		end=segments[-1].end
 	)

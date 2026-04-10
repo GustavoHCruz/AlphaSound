@@ -25,14 +25,15 @@ model AudioSession {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  segments Segment[]
+  segments AudioSegment[]
 }
 
-model Segment {
-  id    String @id @default(uuid())
-  start Float
-  end   Float
-  text  String
+model AudioSegment {
+  id            String @id @default(uuid())
+  start         Float
+  end           Float
+  text          String
+  transcription String
 
   sessionId String
   session   AudioSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)

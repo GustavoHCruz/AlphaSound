@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AudioSegmentModule } from '@resources/audio-segment/audio-segment.module';
 import { AudioSessionModule } from '@resources/audio-session/audio-session.module';
 import { AuthModule } from '@resources/auth/auth.module';
 import { UploadModule } from '@resources/upload/upload.module';
@@ -9,6 +10,7 @@ import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
+    AudioSegmentModule,
     AudioSessionModule,
     AuthModule,
     PrismaModule,
