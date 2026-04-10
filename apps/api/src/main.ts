@@ -23,9 +23,10 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Splicing Sites API')
+    .setTitle('AlphaSound API')
     .setDescription('API Docs')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

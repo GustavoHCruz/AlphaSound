@@ -1,9 +1,9 @@
 import { IsString } from 'class-validator';
 
-export class LoginDTO {
+export class CreateAudioSessionDTO {
   @IsString()
-  email: string;
+  audioPath: string;
 
   @IsString()
-  password: string;
+  userId: string;
 }
