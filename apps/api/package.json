@@ -1,8 +1,6 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "AlphaSound Backend",
-  "author": "Gustavo Henrique Ferreira Cruz",
   "private": true,
   "scripts": {
     "build": "nest build",
