@@ -26,3 +26,7 @@ def transcribe(req: TranscribeRequest) -> StreamingResponse:
 		stream_segments(raw_segments),
 		media_type="application/x-ndjson"
 	)
+
+@app.get("/ping")
+def pong() -> str:
+	return "Pong!"

@@ -55,9 +55,15 @@ export class AudioSessionService {
       return null;
     }
 
+    const transcriber_url = process.env.TRANSCRIBER_API_URL;
+
+    if (!transcriber_url) {
+      throw new Error('TRANSCRIBER_API_URL is not defined on env');
+    }
+
     const response = await firstValueFrom(
       this.http.post(
-        'http://python-service/transcribe',
+        `${transcriber_url}/transcriber`,
         {
           audio_path: session.audioPath,
           group: true,
