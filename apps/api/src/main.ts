@@ -1,3 +1,10 @@
+import 'dotenv/config';
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './common/filters/exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { AllExceptionsFilter } from '@common/filters/exception.filter';
 import { LoggingInterceptor } from '@common/interceptors/logging.interceptor';
 import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
@@ -13,6 +20,25 @@ async function bootstrap() {
       process.env.NODE_ENV === 'prod'
         ? ['error', 'warn']
         : ['log', 'error', 'warn', 'debug', 'verbose'],
+  });
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(
+        origin,
+      );
+
+      callback(null, isLocalhost);
+    },
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204,
   });
 
   app.useGlobalPipes(

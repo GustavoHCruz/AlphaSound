@@ -19,6 +19,14 @@ export class AudioSessionService {
     });
   }
 
+  async findByUser(userId: string) {
+    return this.prisma.audioSession.findMany({
+      where: { userId },
+      include: { segments: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async handleStream(stream: NodeJS.ReadableStream, sessionId: string) {
     let buffer = '';
 
@@ -61,9 +69,13 @@ export class AudioSessionService {
       throw new Error('TRANSCRIBER_API_URL is not defined on env');
     }
 
+    const transcriberBaseUrl = /^https?:\/\//i.test(transcriber_url)
+      ? transcriber_url
+      : `http://${transcriber_url}`;
+
     const response = await firstValueFrom(
       this.http.post(
-        `${transcriber_url}/transcriber`,
+        `${transcriberBaseUrl}/transcribe`,
         {
           audio_path: session.audioPath,
           group: true,
