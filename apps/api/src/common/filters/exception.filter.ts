@@ -78,9 +78,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
   private mapPrismaError(exception: PrismaClientKnownRequestError): string {
     switch (exception.code) {
       case 'P2002':
-        return `Campo único já está em uso: ${exception.meta?.target}`;
+        return `Unique field already in use: ${exception.meta?.target}`;
       case 'P2025':
-        return `Registro não encontrado: ${exception.meta?.cause}`;
+        return `Not found: ${exception.meta?.cause}`;
       default:
         return exception.message;
     }
