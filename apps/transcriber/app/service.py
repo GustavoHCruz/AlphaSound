@@ -1,4 +1,5 @@
-from typing import Iterator, List
+import json
+from typing import Iterator
 from faster_whisper import WhisperModel
 
 from app.models import TranscriptionSegment
@@ -24,46 +25,39 @@ def transcribe_audio(audio_path: str) -> Iterator[TranscriptionSegment]:
 			end=segment.end
 		)
 
+def generate_segments(
+	raw_segments: Iterator[TranscriptionSegment],
+	min_size: int
+) -> Iterator[str]:
+	acc = 0.0
+	start: float | None = None
+	end: float | None = None
+	transcription = ""
 
-def group_segments(
-	segments: List[TranscriptionSegment],
-	max_duration: float = 15.0,
-	max_gap: float = 1.0
-) -> List[TranscriptionSegment]:
+	for segment in raw_segments:
+		acc += segment.end - segment.start
 
-	grouped = []
-	current = []
-	start_time = 0.0
+		if start is None:
+			start = segment.start
 
-	for seg in segments:
-		if not current:
-			current = [seg]
-			start_time = seg.start
-			continue
-		
-		duration = seg.end - start_time
-		gap = seg.start - current[-1].end
+		end = segment.end
+		transcription += segment.transcription
 
-		if (
-			duration > max_duration
-			or gap > max_gap
-			or current[-1].transcription.endswith((".", "!", "?"))
-		):
-			grouped.append(_merge(current))
-			current = [seg]
-			start_time = seg.start
-		else:
-			current.append(seg)
+		if acc >= min_size:
+			yield json.dumps({
+				"transcription": transcription,
+				"start": start,
+				"end": end
+			}) + "\n"
 
-	if current:
-		grouped.append(_merge(current))
+			acc = 0.0
+			start = None
+			end = None
+			transcription = ""
 
-	return grouped
-
-
-def _merge(segments: List[TranscriptionSegment]) -> TranscriptionSegment:
-	return TranscriptionSegment(
-		transcription=" ".join(s.transcription for s in segments),
-		start=segments[0].start,
-		end=segments[-1].end
-	)
+	if transcription:
+		yield json.dumps({
+			"transcription": transcription,
+			"start": start,
+			"end": end
+		}) + "\n"

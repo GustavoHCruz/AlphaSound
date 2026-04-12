@@ -7,4 +7,4 @@ class TranscriptionSegment(BaseModel):
 
 class TranscribeRequest(BaseModel):
 	audio_path: str
-	group: bool = True
+	audio_minimal_size: int = 30
