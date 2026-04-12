@@ -5,8 +5,7 @@ from app.models import TranscriptionSegment
 
 model = WhisperModel(
 	"large-v3",
-	device="cuda",
-	compute_type="float16"
+	device="cpu"
 )
 
 def transcribe_audio(audio_path: str) -> Iterator[TranscriptionSegment]:
