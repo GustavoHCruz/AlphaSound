@@ -27,8 +27,8 @@ type LoginResponse = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@admin.com");
-  const [password, setPassword] = useState("@Dmin1230000");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -134,7 +134,9 @@ export default function LoginPage() {
                 variant="contained"
                 size="large"
                 disabled={loading}
-                startIcon={loading ? <CircularProgress size={18} /> : <LockOpenIcon />}
+                startIcon={
+                  loading ? <CircularProgress size={18} /> : <LockOpenIcon />
+                }
                 sx={{
                   textTransform: "none",
                   fontWeight: 700,
