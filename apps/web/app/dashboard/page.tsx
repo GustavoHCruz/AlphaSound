@@ -39,24 +39,25 @@ type Segment = {
   transcription: string;
 };
 
-type UploadResponse = {
-  status: string;
-  code: number;
-  data: {
-    status: string;
-  };
+type Session = {
+  id: string;
+  createdAt: string;
 };
 
-type Session = {
+type SessionDetail = {
   id: string;
   createdAt: string;
   segments: Segment[];
 };
 
-type SessionsResponse = {
+type SessionsResponse = { status: string; code: number; data: Session[] };
+
+type UploadResponse = {
   status: string;
   code: number;
-  data: Session[];
+  data: {
+    sessionId: string;
+  };
 };
 
 export default function DashboardPage() {
@@ -72,34 +73,48 @@ export default function DashboardPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
+  const handleSelectSession = async (sessionId: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    setSelectedSessionId(sessionId);
+    setSegments([]);
+
+    try {
+      const response = await api.get<{
+        status: string;
+        code: number;
+        data: SessionDetail;
+      }>(`/audio-session/${sessionId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSegments(response.data.data.segments ?? []);
+    } catch {
+      setError("Failed to load session details.");
+    }
+  };
+
   const loadSessions = async () => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
-    const response = await api.get<SessionsResponse>("/audio-sessions/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get<SessionsResponse>(
+      "/audio-session/my-sessions",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     const nextSessions = response.data?.data ?? [];
     setSessions(nextSessions);
 
     if (!selectedSessionId && nextSessions.length > 0) {
-      setSelectedSessionId(nextSessions[0].id);
-      setSegments(nextSessions[0].segments ?? []);
-      return;
-    }
-
-    if (selectedSessionId) {
-      const selected = nextSessions.find(
-        (session) => session.id === selectedSessionId
-      );
-      if (selected) {
-        setSegments(selected.segments ?? []);
-      }
+      handleSelectSession(nextSessions[0].id);
     }
   };
 
@@ -121,9 +136,7 @@ export default function DashboardPage() {
   };
 
   const uploadFile = async (file?: File) => {
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -133,6 +146,7 @@ export default function DashboardPage() {
 
     const formData = new FormData();
     formData.append("file", file);
+
     setUploading(true);
     setError("");
 
@@ -147,21 +161,25 @@ export default function DashboardPage() {
         }
       );
 
-      if (!response.data?.data?.status) {
-        setError("Error processing the audio file.");
+      const sessionId = response.data?.data?.sessionId;
+
+      if (!sessionId) {
+        setError("Invalid upload response.");
         return;
       }
 
       await loadSessions();
+      await handleSelectSession(sessionId);
     } catch (err) {
       const errorResponse = err as AxiosError<{ message?: string | string[] }>;
       const message = errorResponse.response?.data?.message;
+
       if (Array.isArray(message)) {
         setError(message.join(", "));
       } else if (message) {
         setError(message);
       } else {
-        setError("Filed to upload audio.");
+        setError("Failed to upload audio.");
       }
     } finally {
       setUploading(false);
@@ -233,10 +251,7 @@ export default function DashboardPage() {
               <ListItemButton
                 key={session.id}
                 selected={selected}
-                onClick={() => {
-                  setSelectedSessionId(session.id);
-                  setSegments(session.segments ?? []);
-                }}
+                onClick={() => handleSelectSession(session.id)}
               >
                 <ListItemIcon sx={{ color: "inherit", minWidth: 42 }}>
                   <AudioFileIcon />
