@@ -17,10 +17,12 @@ npm install
 
 `.env`:
 
+```bash
 PORT=
 JWT_SECRET=
-DATABASE_URL= #sqlite file
+DATABASE_URL= 				# sqlite file
 TRANSCRIBER_API_URL=
+```
 
 ```bash
 npx prisma migrate dev
@@ -33,8 +35,10 @@ npm run start:dev
 
 `.env`:
 
-WHISPER_MODEL_SIZE=
-WHISPER_DEVICE=
+```bash
+WHISPER_MODEL_SIZE=			# small | medium | large
+WHISPER_DEVICE=				# cuda | cpu
+```
 
 ```bash
 cd transcriber
@@ -48,7 +52,9 @@ uvicorn app.main:app --reload --port 8000
 
 `.env`:
 
+```
 API_URL=
+```
 
 ```bash
 cd web
