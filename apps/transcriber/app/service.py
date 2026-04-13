@@ -6,7 +6,8 @@ from app.models import TranscriptionSegment
 
 model = WhisperModel(
 	"large-v3",
-	device="cpu"
+	device="cuda",
+	compute_type="float16"
 )
 
 def transcribe_audio(audio_path: str) -> Iterator[TranscriptionSegment]:
@@ -41,7 +42,7 @@ def generate_segments(
 			start = segment.start
 
 		end = segment.end
-		transcription += segment.transcription
+		transcription += f" {segment.transcription}"
 
 		if acc >= min_size:
 			yield json.dumps({

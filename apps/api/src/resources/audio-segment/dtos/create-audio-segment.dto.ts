@@ -2,18 +2,18 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateAudioSegmentDTO {
   @IsNumber()
-  start: number;
+  start!: number;
 
   @IsNumber()
-  end: number;
+  end!: number;
 
   @IsString()
   @IsOptional()
   text?: string;
 
   @IsString()
-  transcription: string;
+  transcription!: string;
 
   @IsString()
-  sessionId: string;
+  sessionId!: string;
 }

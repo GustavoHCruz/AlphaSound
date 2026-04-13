@@ -17,10 +17,17 @@ model User {
   createdAt DateTime @default(now())
 }
 
+enum AudioSessionStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 model AudioSession {
-  id        String   @id @default(uuid())
+  id        String             @id @default(uuid())
   audioPath String
-  createdAt DateTime @default(now())
+  status    AudioSessionStatus @default(PROCESSING)
+  createdAt DateTime           @default(now())
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

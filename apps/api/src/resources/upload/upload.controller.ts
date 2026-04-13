@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Post,
   UploadedFile,
@@ -7,20 +8,21 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { existsSync, mkdirSync } from 'node:fs';
-import { extname, join } from 'node:path';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
-import { AudioSessionService } from '@resources/audio-session/audio-session.service';
 import { GetUser } from '@resources/auth/decorators/get-user.decorator';
 import { JwtAuthGuard } from '@resources/auth/guards/jwt-auth.guard';
 import type { AuthUser } from '@resources/auth/types/auth-user.type';
+import { diskStorage } from 'multer';
+import { existsSync, mkdirSync } from 'node:fs';
+import { extname, join } from 'node:path';
+import { UploadAudioDTO } from './dtos/upload-audio.dto';
+import { UploadService } from './upload.service';
 
 const uploadDir = join(process.cwd(), 'uploads');
 
 @Controller('upload')
 export class UploadController {
-  constructor(private audioSessionService: AudioSessionService) {}
+  constructor(private uploadService: UploadService) {}
 
   @Post('audio')
   @UseInterceptors(
@@ -34,8 +36,12 @@ export class UploadController {
           callback(null, uploadDir);
         },
         filename: (_req, file, callback) => {
-          const extension = extname(file.originalname || '').toLowerCase() || '.wav';
-          callback(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${extension}`);
+          const extension =
+            extname(file.originalname || '').toLowerCase() || '.wav';
+          callback(
+            null,
+            `${Date.now()}-${Math.round(Math.random() * 1e9)}${extension}`,
+          );
         },
       }),
     }),
@@ -57,16 +63,16 @@ export class UploadController {
   async uploadAudio(
     @UploadedFile() file: Express.Multer.File,
     @GetUser() user: AuthUser,
+    @Body() data: UploadAudioDTO,
   ) {
     if (!file?.path) {
       throw new BadRequestException('File upload failed');
     }
 
-    const session = await this.audioSessionService.create({
-      audioPath: file.path,
-      userId: user.userId,
-    });
-
-    return this.audioSessionService.processAudio(session.id);
+    return this.uploadService.uploadAndTranscribe(
+      user.userId,
+      file.path,
+      data.audioMinimalSize,
+    );
   }
 }

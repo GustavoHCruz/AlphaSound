@@ -2,8 +2,8 @@ import { IsString } from 'class-validator';
 
 export class CreateAudioSessionDTO {
   @IsString()
-  audioPath: string;
+  audioPath!: string;
 
   @IsString()
-  userId: string;
+  userId!: string;
 }
