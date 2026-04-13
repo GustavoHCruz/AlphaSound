@@ -1,4 +1,5 @@
 fastapi
 faster-whisper
 pydantic
+python-dotenv
 uvicorn

@@ -1,11 +1,33 @@
 import json
+import os
 from typing import Iterator
+from dotenv import load_dotenv
 from faster_whisper import WhisperModel
 
 from app.models import TranscriptionSegment
 
+load_dotenv()
+
+MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "large").lower()
+DEVICE = os.getenv("WHISPER_DEVICE", "cpu").lower()
+
+MODEL_MAP = {
+	"large": "large-v3",
+	"medium": "medium",
+	"small": "small"
+}
+
+model_name = MODEL_MAP.get(MODEL_SIZE, "large-v3")
+
+if DEVICE == "cuda":
+	compute_type = "float16"
+else:
+	compute_type = "int8"
+
 model = WhisperModel(
-	"small",
+	model_name,
+	device=DEVICE,
+	compute_type=compute_type
 )
 
 def transcribe_audio(audio_path: str) -> Iterator[TranscriptionSegment]:

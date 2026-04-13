@@ -31,6 +31,11 @@ npm run start:dev
 
 ### Transcriber (FastAPI)
 
+`.env`:
+
+WHISPER_MODEL_SIZE=
+WHISPER_DEVICE=
+
 ```bash
 cd transcriber
 pip install -r requirements.txt
@@ -40,6 +45,10 @@ uvicorn app.main:app --reload --port 8000
 ---
 
 ### Web (Next.js)
+
+`.env`:
+
+API_URL=
 
 ```bash
 cd web
