@@ -66,7 +66,7 @@ export default function DashboardPage() {
   const [dragActive, setDragActive] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
-    null,
+    null
   );
   const [segments, setSegments] = useState<Segment[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -95,7 +95,7 @@ export default function DashboardPage() {
 
     if (selectedSessionId) {
       const selected = nextSessions.find(
-        (session) => session.id === selectedSessionId,
+        (session) => session.id === selectedSessionId
       );
       if (selected) {
         setSegments(selected.segments ?? []);
@@ -144,7 +144,7 @@ export default function DashboardPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       if (!response.data?.data?.status) {
@@ -204,7 +204,8 @@ export default function DashboardPage() {
             sm: menuOpen ? sideOpenWidth : sideClosedWidth,
           },
           transition: "width .2s ease",
-          background: "linear-gradient(180deg, #091124 0%, #121f3d 100%)",
+          background:
+            "linear-gradient(180deg,rgb(4, 76, 92) 0%,rgb(5, 43, 58) 100%)",
           color: "#f7f9ff",
           borderRight: "1px solid rgba(255,255,255,0.08)",
           minHeight: "100vh",
@@ -244,7 +245,7 @@ export default function DashboardPage() {
                   <ListItemText
                     primary={`Sessao ${session.id.slice(0, 8)}`}
                     secondary={new Date(session.createdAt).toLocaleString(
-                      "pt-BR",
+                      "pt-BR"
                     )}
                     slotProps={{
                       secondary: {
@@ -283,7 +284,8 @@ export default function DashboardPage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            background: "#0f1f3d",
+            background:
+              "linear-gradient(180deg,rgb(4, 76, 92) 0%,rgb(5, 43, 58) 100%)",
             color: "#fff",
           }}
         >

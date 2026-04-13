@@ -82,7 +82,7 @@ export default function LoginPage() {
         placeItems: "center",
         px: 2,
         background:
-          "radial-gradient(circle at 20% 20%, #ffe2b8 0%, #f8c27a 25%, #0f1f3d 75%)",
+          "radial-gradient(circle at 20% 20%,rgb(203, 220, 222) 0%,rgb(42, 105, 144) 25%,rgb(11, 34, 77) 75%)",
       }}
     >
       <Paper
@@ -105,14 +105,14 @@ export default function LoginPage() {
           </Stack>
 
           <Typography variant="body2" color="text.secondary">
-            Entre para acessar suas transcricoes e uploads de audio.
+            Log in to see your transcriptions and audio uploads.
           </Typography>
 
           <Box component="form" onSubmit={onSubmit}>
             <Stack spacing={2}>
               <TextField
                 type="email"
-                label="Email"
+                label="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
@@ -120,7 +120,7 @@ export default function LoginPage() {
               />
               <TextField
                 type="password"
-                label="Senha"
+                label="Password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
@@ -146,7 +146,7 @@ export default function LoginPage() {
                     "linear-gradient(120deg, rgba(8,34,82,1) 0%, rgba(27,112,196,1) 100%)",
                 }}
               >
-                {loading ? "Entrando..." : "Entrar"}
+                {loading ? "Authenticating..." : "Log in"}
               </Button>
             </Stack>
           </Box>

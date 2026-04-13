@@ -23,7 +23,7 @@ DATABASE_URL= #sqlite file
 TRANSCRIBER_API_URL=
 
 ```bash
-npx prism migrate dev
+npx prisma migrate dev
 npm run start:dev
 ```
 
