@@ -26,6 +26,7 @@ enum AudioSessionStatus {
 model AudioSession {
   id        String             @id @default(uuid())
   audioPath String
+  audioBase64 String? // Novo campo opcional para base64
   status    AudioSessionStatus @default(PROCESSING)
   createdAt DateTime           @default(now())
 

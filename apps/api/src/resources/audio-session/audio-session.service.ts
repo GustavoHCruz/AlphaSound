@@ -122,12 +122,18 @@ export class AudioSessionService {
       include: {
         segments: true,
       },
-    });
+    }) as (import('@prisma/client').AudioSession & { segments: any[] }) | null;
 
     if (session?.userId !== userId) {
       throw new UnauthorizedException('Not authorized');
     }
 
-    return session;
+    // Retorna audioBase64 com prefixo para facilitar uso no frontend
+    return {
+      ...session,
+      audioBase64: (session as any).audioBase64
+        ? `data:audio/mpeg;base64,${(session as any).audioBase64}`
+        : null,
+    };
   }
 }

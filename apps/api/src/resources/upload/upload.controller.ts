@@ -69,10 +69,18 @@ export class UploadController {
       throw new BadRequestException('File upload failed');
     }
 
-    return this.uploadService.uploadAndTranscribe(
+    const session = await this.uploadService.uploadAndTranscribe(
       user.userId,
       file.path,
       data.audioMinimalSize,
     );
+
+    return {
+      status: "success",
+      code: 201,
+      data: {
+        sessionId: session.id,
+      },
+    };
   }
 }
