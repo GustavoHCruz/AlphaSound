@@ -22,6 +22,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@src/*": ["./src/*"],
       "@common/*": ["./src/common/*"],
       "@resources/*": ["./src/resources/*"],
       "@prisma/*": ["./src/prisma/*"],

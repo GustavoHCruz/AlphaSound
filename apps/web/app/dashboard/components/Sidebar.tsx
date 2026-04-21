@@ -1,0 +1,73 @@
+import { Box, Divider, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import AudioFileIcon from "@mui/icons-material/AudioFile";
+import { Session } from "../types";
+
+interface SidebarProps {
+  menuOpen: boolean;
+  setMenuOpen: (open: boolean) => void;
+  sessions: Session[];
+  selectedSessionId: string | null;
+  onSelectSession: (id: string) => void;
+  onNewSession: () => void;
+}
+
+export default function Sidebar({
+  menuOpen,
+  setMenuOpen,
+  sessions,
+  selectedSessionId,
+  onSelectSession,
+  onNewSession,
+}: SidebarProps) {
+  return (
+    <Box
+      component="aside"
+      sx={{
+        width: {
+          xs: 82,
+          sm: menuOpen ? 260 : 82,
+        },
+        transition: "width .2s ease",
+        background:
+          "linear-gradient(180deg,rgb(4, 76, 92) 0%,rgb(5, 43, 58) 100%)",
+        color: "#f7f9ff",
+        minHeight: "100vh",
+      }}
+    >
+      <Toolbar>
+        <IconButton onClick={() => setMenuOpen(!menuOpen)} color="inherit">
+          <MenuIcon />
+        </IconButton>
+        {menuOpen && <Typography sx={{ ml: 1 }}>Sessions</Typography>}
+      </Toolbar>
+      <List>
+        <ListItemButton onClick={onNewSession}>
+          <ListItemIcon sx={{ color: "inherit" }}>
+            <UploadFileIcon />
+          </ListItemIcon>
+          {menuOpen && <ListItemText primary="Nova sessão" />}
+        </ListItemButton>
+        <Divider sx={{ my: 1 }} />
+        {sessions.map((session) => (
+          <ListItemButton
+            key={session.id}
+            selected={selectedSessionId === session.id}
+            onClick={() => onSelectSession(session.id)}
+          >
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <AudioFileIcon />
+            </ListItemIcon>
+            {menuOpen && (
+              <ListItemText
+                primary={`Sessão ${session.id.slice(0, 8)}`}
+                secondary={new Date(session.createdAt).toLocaleString("pt-BR")}
+              />
+            )}
+          </ListItemButton>
+        ))}
+      </List>
+    </Box>
+  );
+}

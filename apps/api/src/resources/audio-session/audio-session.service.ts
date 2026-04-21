@@ -3,6 +3,7 @@ import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { AudioSessionStatus } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { AudioSegmentService } from '@resources/audio-segment/audio-segment.service';
+import { readFileSync } from 'fs';
 import { firstValueFrom } from 'rxjs';
 import { CreateAudioSessionDTO } from './dtos/create-audio-session.dto';
 
@@ -41,6 +42,45 @@ export class AudioSessionService {
     });
   }
 
+  async updateName(sessionId: string, userId: string, name?: string) {
+    const session = await this.prisma.audioSession.findFirst({
+      where: {
+        id: sessionId,
+      },
+    });
+
+    if (session?.userId !== userId) {
+      throw new UnauthorizedException('Not authorized');
+    }
+
+    return await this.prisma.audioSession.update({
+      where: {
+        id: sessionId,
+      },
+      data: {
+        name,
+      },
+    });
+  }
+
+  async deleteSession(sessionId: string, userId: string) {
+    const session = await this.prisma.audioSession.findFirst({
+      where: {
+        id: sessionId,
+      },
+    });
+
+    if (session?.userId !== userId) {
+      throw new UnauthorizedException('Not authorized');
+    }
+
+    return await this.prisma.audioSession.delete({
+      where: {
+        id: sessionId,
+      },
+    });
+  }
+
   async handleStream(stream: NodeJS.ReadableStream, sessionId: string) {
     return new Promise((resolve, reject) => {
       let buffer = '';
@@ -62,6 +102,7 @@ export class AudioSessionService {
               end: segment.end,
               text: '',
               transcription: segment.transcription,
+              audioBase64: segment.audio_base64,
               sessionId,
             });
           } catch (err) {
@@ -88,21 +129,31 @@ export class AudioSessionService {
     });
   }
 
-  async processAudio(sessionId: string, audioMinimalSize?: number) {
-    const session = await this.prisma.audioSession.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) return null;
-
+  async processAudio(
+    sessionId: string,
+    audioPath: string,
+    audioMinimalSize?: number,
+  ) {
     const baseUrl = process.env.TRANSCRIBER_API_URL;
-    if (!baseUrl) throw new Error('TRANSCRIBER_API_URL not set');
+
+    const fileBuffer = readFileSync(audioPath);
+    const audioBase64 = fileBuffer.toString('base64');
+    console.log(audioBase64);
+
+    await this.prisma.audioSession.update({
+      where: {
+        id: sessionId,
+      },
+      data: {
+        audioBase64,
+      },
+    });
 
     const response = await firstValueFrom(
       this.http.post(
         `${baseUrl}/transcribe`,
         {
-          audio_path: session.audioPath,
+          audio_base64: audioBase64,
           audio_minimal_size: audioMinimalSize || 30,
         },
         {
@@ -115,14 +166,14 @@ export class AudioSessionService {
   }
 
   async findOneSessionWithSegments(userId: string, sessionId: string) {
-    const session = await this.prisma.audioSession.findFirst({
+    const session = (await this.prisma.audioSession.findFirst({
       where: {
         id: sessionId,
       },
       include: {
         segments: true,
       },
-    });
+    })) as (import('@prisma/client').AudioSession & { segments: any[] }) | null;
 
     if (session?.userId !== userId) {
       throw new UnauthorizedException('Not authorized');

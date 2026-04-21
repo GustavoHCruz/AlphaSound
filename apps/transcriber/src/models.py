@@ -6,5 +6,5 @@ class TranscriptionSegment(BaseModel):
 	end: float
 
 class TranscribeRequest(BaseModel):
-	audio_path: str
+	audio_base64: str
 	audio_minimal_size: int = 30

@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { SubmitEvent, useEffect, useState } from "react";
 import api from "../lib/api";
 
 type LoginResponse = {
@@ -39,7 +39,7 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  const onSubmit = async (event: FormEvent) => {
+  const onSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -112,7 +112,7 @@ export default function LoginPage() {
             <Stack spacing={2}>
               <TextField
                 type="email"
-                label="email"
+                label="Email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required

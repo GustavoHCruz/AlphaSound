@@ -24,10 +24,12 @@ enum AudioSessionStatus {
 }
 
 model AudioSession {
-  id        String             @id @default(uuid())
-  audioPath String
-  status    AudioSessionStatus @default(PROCESSING)
-  createdAt DateTime           @default(now())
+  id          String             @id @default(uuid())
+  name        String
+  audioPath   String
+  audioBase64 String?
+  status      AudioSessionStatus @default(PROCESSING)
+  createdAt   DateTime           @default(now())
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -36,7 +38,8 @@ model AudioSession {
 }
 
 model AudioSegment {
-  id            String @id @default(uuid())
+  id            String  @id @default(uuid())
+  audioBase64   String?
   start         Float
   end           Float
   text          String

@@ -12,6 +12,7 @@ export class AudioSegmentService {
         start: data.start,
         end: data.end,
         text: data.text || '',
+        audioBase64: data.audioBase64,
         transcription: data.transcription,
         sessionId: data.sessionId,
       },
