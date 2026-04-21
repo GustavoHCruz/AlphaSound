@@ -42,6 +42,45 @@ export class AudioSessionService {
     });
   }
 
+  async updateName(sessionId: string, userId: string, name?: string) {
+    const session = await this.prisma.audioSession.findFirst({
+      where: {
+        id: sessionId,
+      },
+    });
+
+    if (session?.userId !== userId) {
+      throw new UnauthorizedException('Not authorized');
+    }
+
+    return await this.prisma.audioSession.update({
+      where: {
+        id: sessionId,
+      },
+      data: {
+        name,
+      },
+    });
+  }
+
+  async deleteSession(sessionId: string, userId: string) {
+    const session = await this.prisma.audioSession.findFirst({
+      where: {
+        id: sessionId,
+      },
+    });
+
+    if (session?.userId !== userId) {
+      throw new UnauthorizedException('Not authorized');
+    }
+
+    return await this.prisma.audioSession.delete({
+      where: {
+        id: sessionId,
+      },
+    });
+  }
+
   async handleStream(stream: NodeJS.ReadableStream, sessionId: string) {
     return new Promise((resolve, reject) => {
       let buffer = '';
@@ -99,6 +138,16 @@ export class AudioSessionService {
 
     const fileBuffer = readFileSync(audioPath);
     const audioBase64 = fileBuffer.toString('base64');
+    console.log(audioBase64);
+
+    await this.prisma.audioSession.update({
+      where: {
+        id: sessionId,
+      },
+      data: {
+        audioBase64,
+      },
+    });
 
     const response = await firstValueFrom(
       this.http.post(

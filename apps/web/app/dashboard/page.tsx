@@ -1,21 +1,21 @@
 "use client";
 
 import { Box, CircularProgress, Typography } from "@mui/material";
-import Sidebar from "./components/Sidebar";
-import TopBar from "./components/TopBar";
-import UploadCard from "./components/UploadCard";
-import AudioPlayerCard from "./components/AudioPlayerCard";
-import SegmentList from "./components/SegmentList";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import api from "../lib/api";
+import AudioPlayerCard from "./components/AudioPlayerCard";
+import SegmentList from "./components/SegmentList";
+import Sidebar from "./components/Sidebar";
+import TopBar from "./components/TopBar";
+import UploadCard from "./components/UploadCard";
 
 const sideOpenWidth = 260;
 const sideClosedWidth = 82;
 
 // ======================= TYPES =======================
-type Segment = {
+export type Segment = {
   id: string;
   start: number;
   end: number;
@@ -75,7 +75,9 @@ export default function DashboardPage() {
   const [menuOpen, setMenuOpen] = useState(true);
   const [dragActive, setDragActive] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
+    null,
+  );
   const [segments, setSegments] = useState<Segment[]>([]);
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -131,7 +133,7 @@ export default function DashboardPage() {
       "/audio-session/my-sessions",
       {
         headers: { Authorization: `Bearer ${token}` },
-      }
+      },
     );
 
     const nextSessions = response.data?.data ?? [];
@@ -185,7 +187,7 @@ export default function DashboardPage() {
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       const sessionId = response.data?.data?.sessionId;
@@ -268,7 +270,15 @@ export default function DashboardPage() {
 
         <Box sx={{ maxWidth: 900, mx: "auto", p: 3 }}>
           {processing ? (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: 300,
+              }}
+            >
               <CircularProgress size={60} />
               <Typography sx={{ mt: 2 }}>Processando áudio...</Typography>
             </Box>
@@ -283,9 +293,11 @@ export default function DashboardPage() {
               fileInputRef={fileInputRef}
               error={error}
             />
-          ) : (audioPath || audioBase64) ? (
+          ) : audioPath || audioBase64 ? (
             <AudioPlayerCard
-              audioUrl={audioBase64 ? base64ToAudioUrl(audioBase64) : audioPath || ""}
+              audioUrl={
+                audioBase64 ? base64ToAudioUrl(audioBase64) : audioPath || ""
+              }
               onNewUpload={() => setShowUpload(true)}
             />
           ) : null}
