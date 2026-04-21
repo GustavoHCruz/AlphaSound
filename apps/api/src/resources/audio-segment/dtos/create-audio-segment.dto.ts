@@ -16,4 +16,8 @@ export class CreateAudioSegmentDTO {
 
   @IsString()
   sessionId!: string;
+
+  @IsString()
+  @IsOptional()
+  audioBase64?: string;
 }

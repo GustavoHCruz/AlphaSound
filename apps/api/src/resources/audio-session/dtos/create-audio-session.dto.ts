@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateAudioSessionDTO {
   @IsString()
@@ -6,8 +6,4 @@ export class CreateAudioSessionDTO {
 
   @IsString()
   userId!: string;
-
-  @IsOptional()
-  @IsString()
-  audioBase64?: string;
 }

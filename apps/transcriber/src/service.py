@@ -1,10 +1,13 @@
+import base64
 import json
 import os
-from typing import Iterator
+import tempfile
+import subprocess
 from dotenv import load_dotenv
 from faster_whisper import WhisperModel
+from typing import Iterator
 
-from app.models import TranscriptionSegment
+from src.models import TranscriptionSegment
 
 load_dotenv()
 
@@ -48,7 +51,8 @@ def transcribe_audio(audio_path: str) -> Iterator[TranscriptionSegment]:
 
 def generate_segments(
 	raw_segments: Iterator[TranscriptionSegment],
-	min_size: int
+	min_size: int,
+	audio_path: str
 ) -> Iterator[str]:
 	acc = 0.0
 	start: float | None = None
@@ -65,10 +69,13 @@ def generate_segments(
 		transcription += f" {segment.transcription}"
 
 		if acc >= min_size:
+			audio_b64 = cut_audio_segment_base64(audio_path, start, end)
+
 			yield json.dumps({
-				"transcription": transcription,
+				"transcription": transcription.strip(),
 				"start": start,
-				"end": end
+				"end": end,
+				"audio_base64": audio_b64
 			}) + "\n"
 
 			acc = 0.0
@@ -77,8 +84,51 @@ def generate_segments(
 			transcription = ""
 
 	if transcription:
+		audio_b64 = cut_audio_segment_base64(audio_path, start or 0.0, end or 0.0)
+
 		yield json.dumps({
-			"transcription": transcription,
+			"transcription": transcription.strip(),
 			"start": start,
-			"end": end
+			"end": end,
+			"audio_base64": audio_b64
 		}) + "\n"
+	
+	if os.path.exists(audio_path):
+		os.remove(audio_path)
+
+def save_temp_audio(audio_base64: str) -> str:
+	data = base64.b64decode(audio_base64)
+
+	tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+	tmp.write(data)
+	tmp.flush()
+	tmp.close()
+
+	return tmp.name
+
+def cut_audio_segment_base64(
+	input_path: str,
+	start: float,
+	end: float
+) -> str:
+	with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_out:
+		output_path = tmp_out.name
+
+	cmd = [
+		"ffmpeg",
+		"-y",
+		"-i", input_path,
+		"-ss", str(start),
+		"-to", str(end),
+		"-c", "copy",
+		output_path
+	]
+
+	subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+	with open(output_path, "rb") as f:
+		encoded = base64.b64encode(f.read()).decode("utf-8")
+
+	os.remove(output_path)
+
+	return encoded

@@ -11,6 +11,7 @@ CREATE TABLE "User" (
 CREATE TABLE "AudioSession" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "audioPath" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'PROCESSING',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
     CONSTRAINT "AudioSession_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -19,6 +20,7 @@ CREATE TABLE "AudioSession" (
 -- CreateTable
 CREATE TABLE "AudioSegment" (
     "id" TEXT NOT NULL PRIMARY KEY,
+    "audioBase64" TEXT,
     "start" REAL NOT NULL,
     "end" REAL NOT NULL,
     "text" TEXT NOT NULL,

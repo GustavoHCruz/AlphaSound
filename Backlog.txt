@@ -1,1 +1,0 @@
-No backend, ao segmentar os trechos do audio, quebrar também o audio referente aquela parte e salvar junto na tabela como um b64 e assim ao retornar pro front a parte do segmento e o audio quebrado ele consegue mostrar em um campo de audio corretamente.

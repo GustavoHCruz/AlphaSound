@@ -26,7 +26,6 @@ enum AudioSessionStatus {
 model AudioSession {
   id        String             @id @default(uuid())
   audioPath String
-  audioBase64 String? // Novo campo opcional para base64
   status    AudioSessionStatus @default(PROCESSING)
   createdAt DateTime           @default(now())
 
@@ -37,7 +36,8 @@ model AudioSession {
 }
 
 model AudioSegment {
-  id            String @id @default(uuid())
+  id            String  @id @default(uuid())
+  audioBase64   String?
   start         Float
   end           Float
   text          String
