@@ -11,10 +11,6 @@ import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
 import UploadCard from "./components/UploadCard";
 
-const sideOpenWidth = 260;
-const sideClosedWidth = 82;
-
-// ======================= TYPES =======================
 export type Segment = {
   id: string;
   start: number;
@@ -53,9 +49,7 @@ type UploadResponse = {
   };
 };
 
-// Utilitário para converter base64 em URL tocável
 function base64ToAudioUrl(base64: string, mime = "audio/mpeg") {
-  // Remove prefixo se vier junto
   const cleaned = base64.replace(/^data:audio\/\w+;base64,/, "");
   const byteCharacters = atob(cleaned);
   const byteNumbers = new Array(byteCharacters.length);
@@ -67,7 +61,6 @@ function base64ToAudioUrl(base64: string, mime = "audio/mpeg") {
   return URL.createObjectURL(blob);
 }
 
-// ======================= COMPONENT =======================
 export default function DashboardPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -88,7 +81,6 @@ export default function DashboardPage() {
   const [audioBase64, setAudioBase64] = useState<string | null>(null);
   const [sessionStatus, setSessionStatus] = useState<string | null>(null);
 
-  // ======================= LOAD SESSION =======================
   const handleSelectSession = async (sessionId: string) => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -124,7 +116,6 @@ export default function DashboardPage() {
     }
   };
 
-  // ======================= LOAD LIST =======================
   const loadSessions = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -144,7 +135,6 @@ export default function DashboardPage() {
     }
   };
 
-  // ======================= INIT =======================
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -158,17 +148,28 @@ export default function DashboardPage() {
     });
   }, []);
 
-  // ======================= LOGOUT =======================
   const onLogout = () => {
     localStorage.removeItem("token");
     router.replace("/login");
   };
 
-  // ======================= UPLOAD =======================
+  const isValidMp3 = (file: File) => {
+    return (
+      file.type === "audio/mpeg" ||
+      file.name.toLowerCase().endsWith(".mp3")
+    );
+  };
+
   const uploadFile = async (file?: File) => {
     if (!file) return;
 
+    if (!isValidMp3(file)) {
+    setError("Only MP3 files are allowed.");
+    return;
+  }
+
     const token = localStorage.getItem("token");
+    
     if (!token) {
       router.replace("/login");
       return;
@@ -233,7 +234,6 @@ export default function DashboardPage() {
     setDragActive(false);
   };
 
-  // ======================= POLLING =======================
   useEffect(() => {
     if (!selectedSessionId || sessionStatus !== "PROCESSING") return;
 
@@ -245,7 +245,6 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, [selectedSessionId, sessionStatus]);
 
-  // ======================= UI =======================
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", background: "#eef2f9" }}>
       <Sidebar
@@ -280,7 +279,7 @@ export default function DashboardPage() {
               }}
             >
               <CircularProgress size={60} />
-              <Typography sx={{ mt: 2 }}>Processando áudio...</Typography>
+              <Typography sx={{ mt: 2 }}>Processing audio...</Typography>
             </Box>
           ) : showUpload ? (
             <UploadCard
@@ -298,7 +297,6 @@ export default function DashboardPage() {
               audioUrl={
                 audioBase64 ? base64ToAudioUrl(audioBase64) : audioPath || ""
               }
-              onNewUpload={() => setShowUpload(true)}
             />
           ) : null}
 

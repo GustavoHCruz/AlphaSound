@@ -1,5 +1,5 @@
-import { Alert, Box, Button, Card, CardContent, CircularProgress, Stack, Typography } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { Alert, Box, Button, Card, CardContent, CircularProgress, Stack, Typography } from "@mui/material";
 import { ChangeEvent, DragEvent, RefObject } from "react";
 
 interface UploadCardProps {
@@ -44,16 +44,16 @@ export default function UploadCard({
           <Stack spacing={1.5} sx={{ alignItems: "center" }}>
             <UploadFileIcon sx={{ fontSize: 42, color: "#1c77d9" }} />
             <Typography sx={{ fontWeight: 700 }}>
-              {dragActive ? "Solte o arquivo aqui" : "Arraste ou clique para enviar"}
+              {dragActive ? "Drop file here" : "Drag and drop to upload"}
             </Typography>
-            <Typography color="text.secondary">ou clique para selecionar</Typography>
+            <Typography color="text.secondary">or click to select</Typography>
             <Button
               variant="contained"
               startIcon={uploading ? <CircularProgress size={18} /> : <UploadFileIcon />}
               disabled={uploading}
               sx={{ textTransform: "none", fontWeight: 700 }}
             >
-              {uploading ? "Enviando..." : "Selecionar arquivo"}
+              {uploading ? "Uploading..." : "Select File"}
             </Button>
           </Stack>
         </Box>
@@ -61,7 +61,7 @@ export default function UploadCard({
           hidden
           ref={fileInputRef}
           type="file"
-          accept="audio/*"
+          accept=".mp3,audio/mpeg"
           onChange={onUpload}
         />
         {error && <Alert severity="error">{error}</Alert>}

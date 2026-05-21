@@ -138,7 +138,6 @@ export class AudioSessionService {
 
     const fileBuffer = readFileSync(audioPath);
     const audioBase64 = fileBuffer.toString('base64');
-    console.log(audioBase64);
 
     await this.prisma.audioSession.update({
       where: {

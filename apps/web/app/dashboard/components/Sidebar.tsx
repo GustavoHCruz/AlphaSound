@@ -1,7 +1,8 @@
-import { Box, Divider, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import { formatDate } from "@/app/utils/format";
+import AudioFileIcon from "@mui/icons-material/AudioFile";
 import MenuIcon from "@mui/icons-material/Menu";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import AudioFileIcon from "@mui/icons-material/AudioFile";
+import { Box, Divider, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
 import { Session } from "../types";
 
 interface SidebarProps {
@@ -47,7 +48,7 @@ export default function Sidebar({
           <ListItemIcon sx={{ color: "inherit" }}>
             <UploadFileIcon />
           </ListItemIcon>
-          {menuOpen && <ListItemText primary="Nova sessão" />}
+          {menuOpen && <ListItemText primary="New Session" />}
         </ListItemButton>
         <Divider sx={{ my: 1 }} />
         {sessions.map((session) => (
@@ -61,8 +62,8 @@ export default function Sidebar({
             </ListItemIcon>
             {menuOpen && (
               <ListItemText
-                primary={`Sessão ${session.id.slice(0, 8)}`}
-                secondary={new Date(session.createdAt).toLocaleString("pt-BR")}
+                primary={`Session ${session.id.slice(0, 8)}`}
+                secondary={formatDate(session.createdAt)}
               />
             )}
           </ListItemButton>

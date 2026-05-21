@@ -52,7 +52,7 @@ export default function LoginPage() {
 
       const token = response.data?.data?.access_token;
       if (!token) {
-        setError("Resposta de autenticacao invalida.");
+        setError("Invalid email or password.");
         return;
       }
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
       } else if (message) {
         setError(message);
       } else {
-        setError("Falha ao conectar com a API de autenticacao.");
+        setError("Could not authenticate.");
       }
     } finally {
       setLoading(false);
