@@ -17,6 +17,7 @@ Setup the enviroment file (`.env`):
 ```bash
 WHISPER_MODEL_SIZE=			# small | medium | large
 WHISPER_DEVICE=					# cuda | cpu
+LANGUAGE=								# en | pt | fr | es
 ```
 
 Then, install the dependencies and run the application:
@@ -63,7 +64,7 @@ Setup the enviroment file (`.env`):
 `.env`:
 
 ```bash
-API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 Install the dependencies and run the application:

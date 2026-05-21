@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/src/lib/api";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
@@ -15,7 +16,6 @@ import {
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useEffect, useState } from "react";
-import api from "../lib/api";
 
 type LoginResponse = {
   status: string;

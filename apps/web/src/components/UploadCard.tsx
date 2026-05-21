@@ -1,5 +1,14 @@
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { Alert, Box, Button, Card, CardContent, CircularProgress, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { ChangeEvent, DragEvent, RefObject } from "react";
 
 interface UploadCardProps {
@@ -49,7 +58,9 @@ export default function UploadCard({
             <Typography color="text.secondary">or click to select</Typography>
             <Button
               variant="contained"
-              startIcon={uploading ? <CircularProgress size={18} /> : <UploadFileIcon />}
+              startIcon={
+                uploading ? <CircularProgress size={18} /> : <UploadFileIcon />
+              }
               disabled={uploading}
               sx={{ textTransform: "none", fontWeight: 700 }}
             >

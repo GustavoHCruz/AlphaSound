@@ -13,6 +13,7 @@ load_dotenv()
 
 MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "large").lower()
 DEVICE = os.getenv("WHISPER_DEVICE", "cpu").lower()
+LANGUAGE = os.getenv("LANGUAGE", "en").lower()
 
 MODEL_MAP = {
 	"large": "large-v3",
@@ -37,7 +38,7 @@ def transcribe_audio(audio_path: str) -> Iterator[TranscriptionSegment]:
 	segments, _ = model.transcribe(
 		audio_path,
 		beam_size=5,
-		language="pt",
+		language=LANGUAGE,
 		vad_filter=True,
 		vad_parameters=dict(min_silence_duration_ms=1000)
 	)
