@@ -16,8 +16,8 @@ Setup the enviroment file (`.env`):
 
 ```bash
 WHISPER_MODEL_SIZE=			# small | medium | large
-WHISPER_DEVICE=					# cuda | cpu
-LANGUAGE=								# en | pt | fr | es
+WHISPER_DEVICE=				# cuda | cpu
+LANGUAGE=						# en | pt | fr | es
 ```
 
 Then, install the dependencies and run the application:
@@ -37,7 +37,7 @@ Setup the enviroment file (`.env`):
 ```bash
 PORT=8000
 JWT_SECRET=your-jwt-secret
-DATABASE_URL=file:db.sqlite									# sqlite file
+DATABASE_URL=file:db.sqlite						# sqlite file
 TRANSCRIBER_API_URL=http://localhost:8080
 ```
 
