@@ -171,6 +171,23 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, [selectedSessionId, processing]);
 
+  useEffect(() => {
+    const handleGlobalPlay = (event: Event) => {
+      const allAudios = document.querySelectorAll("audio");
+      allAudios.forEach((audio) => {
+        if (audio !== event.target) {
+          audio.pause();
+        }
+      });
+    };
+
+    document.addEventListener("play", handleGlobalPlay, true);
+
+    return () => {
+      document.removeEventListener("play", handleGlobalPlay, true);
+    };
+  }, []);
+
   const selectedSession = sessions.find(
     (session) => session.id === selectedSessionId
   );
