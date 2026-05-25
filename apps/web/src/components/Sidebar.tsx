@@ -1,3 +1,12 @@
+import {
+  sidebarEditButtonStyle,
+  sidebarItemStyle,
+  sidebarScrollAreaStyle,
+  sidebarSessionInputStyle,
+  sidebarSessionTextStyle,
+  sidebarStyle,
+} from "@/src/styles/sidebar";
+import { palette } from "@/src/theme/palette";
 import { AudioSession } from "@/src/types/audio-session";
 import { formatDate } from "@/src/utils/format";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
@@ -43,15 +52,12 @@ export default function Sidebar({
     <Box
       component="aside"
       sx={{
+        ...sidebarStyle,
         width: {
           xs: 82,
           sm: menuOpen ? 260 : 82,
         },
         transition: "width .2s ease",
-        background:
-          "linear-gradient(180deg,rgb(4, 76, 92) 0%,rgb(5, 43, 58) 100%)",
-        color: "#f7f9ff",
-        minHeight: "100vh",
       }}
     >
       <Toolbar>
@@ -60,107 +66,111 @@ export default function Sidebar({
         </IconButton>
         {menuOpen && <Typography sx={{ ml: 1 }}>Sessions</Typography>}
       </Toolbar>
-      <List>
-        <ListItemButton onClick={onNewSession}>
-          <ListItemIcon sx={{ color: "inherit" }}>
-            <UploadFileIcon />
-          </ListItemIcon>
-          {menuOpen && <ListItemText primary="New Session" />}
-        </ListItemButton>
-        <Divider sx={{ my: 1 }} />
-        {sessions.map((session) => (
-          <ListItemButton
-            key={session.id}
-            selected={selectedSessionId === session.id}
-            onClick={() => onSelectSession(session.id)}
-          >
-            <ListItemIcon sx={{ color: "inherit" }}>
-              <AudioFileIcon />
+      <Box sx={sidebarScrollAreaStyle}>
+        <List>
+          <ListItemButton onClick={onNewSession} sx={sidebarItemStyle(false)}>
+            <ListItemIcon
+              sx={{
+                color: palette.text.inverted,
+              }}
+            >
+              <UploadFileIcon />
             </ListItemIcon>
-            {menuOpen && (
-              <ListItemText
-                primary={
-                  editingSessionId === session.id ? (
-                    <TextField
-                      autoFocus
-                      variant="standard"
-                      value={session.name}
-                      onChange={(e) => onRename(session.id, e.target.value)}
-                      onBlur={() => setEditingSessionId(null)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          setEditingSessionId(null);
-                        }
-
-                        if (e.key === "Escape") {
-                          setEditingSessionId(null);
-                        }
-                      }}
-                      fullWidth
-                      slotProps={{
-                        input: {
-                          disableUnderline: true,
-                          sx: {
-                            color: "#ffffff",
-                            fontSize: 14,
-                            fontWeight: 500,
-                          },
-                        },
-                      }}
-                    />
-                  ) : (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          flex: 1,
-                          fontSize: 14,
-                          fontWeight: 500,
-                          color: "#ffffff",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {session.name}
-                      </Typography>
-
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingSessionId(session.id);
-                        }}
-                        sx={{
-                          color: "rgba(255,255,255,0.7)",
-                          p: 0.5,
-                        }}
-                      >
-                        <EditIcon fontSize="inherit" />
-                      </IconButton>
-                    </Box>
-                  )
-                }
-                secondary={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  >
-                    {formatDate(session.createdAt)}
-                  </Typography>
-                }
-              />
-            )}
+            {menuOpen && <ListItemText primary="New Session" />}
           </ListItemButton>
-        ))}
-      </List>
+          <Divider
+            sx={{
+              my: 1,
+              borderColor: "rgba(255,255,255,0.08)",
+            }}
+          />
+          {sessions.map((session) => {
+            const selected = selectedSessionId === session.id;
+            return (
+              <ListItemButton
+                key={session.id}
+                selected={selected}
+                onClick={() => onSelectSession(session.id)}
+                sx={sidebarItemStyle(selected)}
+              >
+                <ListItemIcon
+                  sx={{
+                    color: palette.text.inverted,
+                  }}
+                >
+                  <AudioFileIcon />
+                </ListItemIcon>
+                {menuOpen && (
+                  <ListItemText
+                    primary={
+                      editingSessionId === session.id ? (
+                        <TextField
+                          autoFocus
+                          variant="standard"
+                          value={session.name}
+                          onChange={(e) => onRename(session.id, e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          onBlur={() => setEditingSessionId(null)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              setEditingSessionId(null);
+                            }
+                            if (e.key === "Escape") {
+                              setEditingSessionId(null);
+                            }
+                          }}
+                          slotProps={{
+                            input: {
+                              disableUnderline: true,
+                              sx: sidebarSessionInputStyle,
+                            },
+                          }}
+                        />
+                      ) : (
+                        <Box
+                          sx={{
+                            display: "flex",
+
+                            alignItems: "center",
+
+                            gap: 1,
+                          }}
+                        >
+                          <Typography sx={sidebarSessionTextStyle}>
+                            {session.name}
+                          </Typography>
+
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+
+                              setEditingSessionId(session.id);
+                            }}
+                            sx={sidebarEditButtonStyle}
+                          >
+                            <EditIcon fontSize="inherit" />
+                          </IconButton>
+                        </Box>
+                      )
+                    }
+                    secondary={
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: palette.text.invertedSecondary,
+                        }}
+                      >
+                        {formatDate(session.createdAt)}
+                      </Typography>
+                    }
+                  />
+                )}
+              </ListItemButton>
+            );
+          })}
+        </List>
+      </Box>
     </Box>
   );
 }

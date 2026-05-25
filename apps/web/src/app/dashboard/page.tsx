@@ -1,28 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-import { Box, CircularProgress, Stack, Typography } from "@mui/material";
-
 import AudioPlayerCard from "@/src/components/AudioPlayerCard";
 import SegmentList from "@/src/components/SegmentList";
 import Sidebar from "@/src/components/Sidebar";
 import TopBar from "@/src/components/TopBar";
 import UploadCard from "@/src/components/UploadCard";
-
 import { useAudioUpload } from "@/src/hooks/useAudioUpload";
-
 import { updateSegmentText } from "@/src/services/audio-segment.service";
-
 import {
   getMySessions,
   getSessionById,
   updateSessionName,
 } from "@/src/services/audio-session.service";
-
 import { AudioSegment, AudioSession } from "@/src/types/audio-session";
-
 import { base64ToAudioUrl } from "@/src/utils/audio";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 
 export default function DashboardPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -41,17 +34,13 @@ export default function DashboardPage() {
 
   const loadSessions = async () => {
     const data = await getMySessions();
-
     setSessions(data);
-
     if (!selectedSessionId && data.length > 0) {
       await selectSession(data[0].id);
     }
   };
-
   const selectSession = async (sessionId: string) => {
     setSelectedSessionId(sessionId);
-
     try {
       const session = await getSessionById(sessionId);
 
@@ -92,7 +81,6 @@ export default function DashboardPage() {
       }
     } catch {}
   };
-
   const updateSegment = async (segmentId: string, text: string) => {
     setSegments((prev) =>
       prev.map((segment) =>
@@ -109,7 +97,6 @@ export default function DashboardPage() {
       await updateSegmentText(segmentId, text);
     } catch {}
   };
-
   const renameSession = async (sessionId: string, name: string) => {
     setSessions((prev) =>
       prev.map((session) =>
@@ -126,46 +113,32 @@ export default function DashboardPage() {
       await updateSessionName(sessionId, name);
     } catch {}
   };
-
   const { uploading, error, uploadFile } = useAudioUpload({
     onUploaded: async (sessionId) => {
       await loadSessions();
-
       await selectSession(sessionId);
     },
   });
-
   const onUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-
     await uploadFile(file);
-
     event.target.value = "";
   };
-
   const onDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-
     setDragActive(false);
-
     const file = event.dataTransfer.files?.[0];
-
     await uploadFile(file);
   };
-
   const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-
     setDragActive(true);
   };
-
   const onDragLeave = () => {
     setDragActive(false);
   };
-
   const onLogout = () => {
     localStorage.removeItem("token");
-
     window.location.href = "/login";
   };
 
@@ -177,19 +150,22 @@ export default function DashboardPage() {
     if (!selectedSessionId || !processing) {
       return;
     }
-
     const interval = setInterval(() => {
       selectSession(selectedSessionId);
     }, 1000);
-
     return () => clearInterval(interval);
   }, [selectedSessionId, processing]);
+
+  const selectedSession = sessions.find(
+    (session) => session.id === selectedSessionId
+  );
 
   return (
     <Box
       sx={{
         display: "flex",
-        minHeight: "100vh",
+        height: "100vh",
+        overflow: "hidden",
         background: "#eef2f9",
       }}
     >
@@ -211,7 +187,13 @@ export default function DashboardPage() {
         onRename={renameSession}
       />
 
-      <Box sx={{ flex: 1 }}>
+      <Box
+        sx={{
+          flex: 1,
+          height: "100vh",
+          overflowY: "auto",
+        }}
+      >
         <TopBar onLogout={onLogout} />
 
         <Box
@@ -251,7 +233,9 @@ export default function DashboardPage() {
                       fontWeight: 600,
                     }}
                   >
-                    Transcription Result
+                    {selectedSession?.name
+                      ? `${selectedSession.name} - Transcription Result`
+                      : "Transcription Result"}
                   </Typography>
 
                   <AudioPlayerCard audioUrl={audioUrl} />
@@ -272,7 +256,6 @@ export default function DashboardPage() {
                     }}
                   >
                     <CircularProgress size={42} />
-
                     <Typography
                       variant="body1"
                       sx={{
