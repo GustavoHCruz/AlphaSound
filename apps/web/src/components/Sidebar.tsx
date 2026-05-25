@@ -69,21 +69,14 @@ export default function Sidebar({
       <Box sx={sidebarScrollAreaStyle}>
         <List>
           <ListItemButton onClick={onNewSession} sx={sidebarItemStyle(false)}>
-            <ListItemIcon
-              sx={{
-                color: palette.text.inverted,
-              }}
-            >
+            <ListItemIcon sx={{ color: palette.text.inverted }}>
               <UploadFileIcon />
             </ListItemIcon>
             {menuOpen && <ListItemText primary="New Session" />}
           </ListItemButton>
-          <Divider
-            sx={{
-              my: 1,
-              borderColor: "rgba(255,255,255,0.08)",
-            }}
-          />
+
+          <Divider sx={{ my: 1, borderColor: "rgba(255,255,255,0.08)" }} />
+
           {sessions.map((session) => {
             const selected = selectedSessionId === session.id;
             return (
@@ -93,17 +86,14 @@ export default function Sidebar({
                 onClick={() => onSelectSession(session.id)}
                 sx={sidebarItemStyle(selected)}
               >
-                <ListItemIcon
-                  sx={{
-                    color: palette.text.inverted,
-                  }}
-                >
+                <ListItemIcon sx={{ color: palette.text.inverted }}>
                   <AudioFileIcon />
                 </ListItemIcon>
+
                 {menuOpen && (
                   <ListItemText
                     primary={
-                      editingSessionId === session.id ? (
+                      editingSessionId === session.id && selected ? (
                         <TextField
                           autoFocus
                           variant="standard"
@@ -112,10 +102,7 @@ export default function Sidebar({
                           onClick={(e) => e.stopPropagation()}
                           onBlur={() => setEditingSessionId(null)}
                           onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              setEditingSessionId(null);
-                            }
-                            if (e.key === "Escape") {
+                            if (e.key === "Enter" || e.key === "Escape") {
                               setEditingSessionId(null);
                             }
                           }}
@@ -128,38 +115,31 @@ export default function Sidebar({
                         />
                       ) : (
                         <Box
-                          sx={{
-                            display: "flex",
-
-                            alignItems: "center",
-
-                            gap: 1,
-                          }}
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
                         >
                           <Typography sx={sidebarSessionTextStyle}>
                             {session.name}
                           </Typography>
 
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-
-                              setEditingSessionId(session.id);
-                            }}
-                            sx={sidebarEditButtonStyle}
-                          >
-                            <EditIcon fontSize="inherit" />
-                          </IconButton>
+                          {selected && (
+                            <IconButton
+                              size="small"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingSessionId(session.id);
+                              }}
+                              sx={sidebarEditButtonStyle}
+                            >
+                              <EditIcon fontSize="inherit" />
+                            </IconButton>
+                          )}
                         </Box>
                       )
                     }
                     secondary={
                       <Typography
                         variant="caption"
-                        sx={{
-                          color: palette.text.invertedSecondary,
-                        }}
+                        sx={{ color: palette.text.invertedSecondary }}
                       >
                         {formatDate(session.createdAt)}
                       </Typography>

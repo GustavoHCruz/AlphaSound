@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 export default function DashboardPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const lastAudioBase64Ref = useRef<string | null>(null);
+  const lastEditRef = useRef<{ id: string; timestamp: number } | null>(null);
   const [menuOpen, setMenuOpen] = useState(true);
   const [dragActive, setDragActive] = useState(false);
   const [sessions, setSessions] = useState<AudioSession[]>([]);
@@ -43,35 +44,47 @@ export default function DashboardPage() {
     setSelectedSessionId(sessionId);
     try {
       const session = await getSessionById(sessionId);
-
       const incomingSegments = session.segments ?? [];
 
       setSegments((prev) => {
-        const sameLength = incomingSegments.length === prev.length;
+        let hasChanges = false;
 
-        const sameContent =
-          sameLength &&
-          incomingSegments.every(
-            (segment, index) =>
-              segment.id === prev[index]?.id &&
-              segment.text === prev[index]?.text
-          );
+        const mergedSegments = incomingSegments.map((incoming) => {
+          const localMatch = prev.find((p) => p.id === incoming.id);
+          let targetText = incoming.text;
 
-        if (sameContent) {
-          return prev;
+          if (
+            localMatch &&
+            lastEditRef.current?.id === incoming.id &&
+            Date.now() - lastEditRef.current.timestamp < 2000
+          ) {
+            targetText = localMatch.text;
+          }
+
+          if (
+            localMatch &&
+            localMatch.id === incoming.id &&
+            localMatch.text === targetText
+          ) {
+            return localMatch;
+          }
+          hasChanges = true;
+          return { ...incoming, text: targetText };
+        });
+
+        if (prev.length !== incomingSegments.length || hasChanges) {
+          return mergedSegments;
         }
 
-        return incomingSegments;
+        return prev;
       });
 
       setSessionStatus(session.status ?? null);
-
       setShowUpload(false);
 
       if (session.audioBase64) {
         if (lastAudioBase64Ref.current !== session.audioBase64) {
           lastAudioBase64Ref.current = session.audioBase64;
-
           setAudioUrl(base64ToAudioUrl(session.audioBase64));
         }
       } else {
@@ -82,6 +95,8 @@ export default function DashboardPage() {
     } catch {}
   };
   const updateSegment = async (segmentId: string, text: string) => {
+    lastEditRef.current = { id: segmentId, timestamp: Date.now() };
+
     setSegments((prev) =>
       prev.map((segment) =>
         segment.id === segmentId
