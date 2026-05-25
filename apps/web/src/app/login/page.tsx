@@ -6,6 +6,7 @@ import { palette } from "@/src/theme/palette";
 import { shadows } from "@/src/theme/shadows";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import {
   Alert,
   Box,
@@ -18,7 +19,7 @@ import {
 } from "@mui/material";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type SubmitEvent } from "react";
+import { useEffect, useState } from "react";
 
 type LoginResponse = {
   status: string;
@@ -30,10 +31,15 @@ type LoginResponse = {
 
 export default function LoginPage() {
   const router = useRouter();
+
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -42,25 +48,49 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  const onSubmit = async (event: SubmitEvent) => {
+  const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
-      const response = await api.post<LoginResponse>("/auth/login", {
-        email,
-        password,
-      });
+      if (isSignUp) {
+        await api.post("/users", {
+          name,
+          email,
+          password,
+        });
 
-      const token = response.data?.data?.access_token;
-      if (!token) {
-        setError("Invalid email or password.");
-        return;
+        const response = await api.post<LoginResponse>("/auth/login", {
+          email,
+          password,
+        });
+
+        const token = response.data?.data?.access_token;
+        if (!token) {
+          setSuccess("Account created successfully! Please log in.");
+          setIsSignUp(false);
+          return;
+        }
+
+        localStorage.setItem("token", token);
+        router.replace("/dashboard");
+      } else {
+        const response = await api.post<LoginResponse>("/auth/login", {
+          email,
+          password,
+        });
+
+        const token = response.data?.data?.access_token;
+        if (!token) {
+          setError("Invalid email or password.");
+          return;
+        }
+
+        localStorage.setItem("token", token);
+        router.replace("/dashboard");
       }
-
-      localStorage.setItem("token", token);
-      router.replace("/dashboard");
     } catch (err) {
       const errorResponse = err as AxiosError<{
         message?: string | string[];
@@ -73,11 +103,22 @@ export default function LoginPage() {
       } else if (message) {
         setError(message);
       } else {
-        setError("Could not authenticate.");
+        setError(
+          isSignUp ? "Could not create account." : "Could not authenticate."
+        );
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleToggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setName("");
+    setEmail("");
+    setPassword("");
+    setError("");
+    setSuccess("");
   };
 
   return (
@@ -113,55 +154,97 @@ export default function LoginPage() {
               alignItems: "center",
             }}
           >
-            <GraphicEqIcon
-              sx={{
-                color: palette.text.primary,
-              }}
-            />
-
+            <GraphicEqIcon sx={{ color: palette.text.primary }} />
             <Typography
               variant="h5"
-              sx={{
-                color: palette.text.primary,
-              }}
+              sx={{ color: palette.text.primary, fontWeight: 600 }}
             >
               AlphaSound
             </Typography>
           </Stack>
+
           <Typography variant="body2" color="text.secondary">
-            Log in to see your transcriptions and audio uploads.
+            {isSignUp
+              ? "Create your account to start transcribing your audio files."
+              : "Log in to see your transcriptions and audio uploads."}
           </Typography>
+
           <Box component="form" onSubmit={onSubmit}>
             <Stack spacing={2}>
+              {isSignUp && (
+                <TextField
+                  type="text"
+                  label="Name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  required
+                  fullWidth
+                />
+              )}
+
               <TextField
                 type="email"
                 label="Email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
+                fullWidth
               />
+
               <TextField
                 type="password"
                 label="Password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
+                fullWidth
               />
+
               {error ? <Alert severity="error">{error}</Alert> : null}
+              {success ? <Alert severity="success">{success}</Alert> : null}
+
               <Button
                 type="submit"
                 variant="contained"
                 size="large"
                 disabled={loading}
                 startIcon={
-                  loading ? <CircularProgress size={18} /> : <LockOpenIcon />
+                  loading ? (
+                    <CircularProgress size={18} />
+                  ) : isSignUp ? (
+                    <PersonAddIcon />
+                  ) : (
+                    <LockOpenIcon />
+                  )
                 }
                 sx={{
                   py: 1.2,
                   background: gradients.primaryButton,
                 }}
               >
-                {loading ? "Authenticating..." : "Log in"}
+                {loading
+                  ? isSignUp
+                    ? "Creating account..."
+                    : "Authenticating..."
+                  : isSignUp
+                  ? "Sign up"
+                  : "Log in"}
+              </Button>
+
+              <Button
+                variant="text"
+                onClick={handleToggleMode}
+                disabled={loading}
+                sx={{
+                  color: palette.text.secondary,
+                  textTransform: "none",
+                  fontWeight: 500,
+                  "&:hover": { background: "rgba(0,0,0,0.04)" },
+                }}
+              >
+                {isSignUp
+                  ? "Already have an account? Log in"
+                  : "Don't have an account? Sign up"}
               </Button>
             </Stack>
           </Box>
