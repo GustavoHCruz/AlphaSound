@@ -4,6 +4,7 @@ import { AudioSessionStatus } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { AudioSegmentService } from '@resources/audio-segment/audio-segment.service';
 import { readFileSync } from 'fs';
+import * as fs from 'fs/promises';
 import { firstValueFrom } from 'rxjs';
 import { CreateAudioSessionDTO } from './dtos/create-audio-session.dto';
 
@@ -25,8 +26,13 @@ export class AudioSessionService {
 
   async findByUser(userId: string) {
     return this.prisma.audioSession.findMany({
+      select: {
+        id: true,
+        createdAt: true,
+        status: true,
+        name: true,
+      },
       where: { userId },
-      include: { segments: true },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -73,6 +79,8 @@ export class AudioSessionService {
     if (session?.userId !== userId) {
       throw new UnauthorizedException('Not authorized');
     }
+
+    await fs.unlink(session.audioPath);
 
     return await this.prisma.audioSession.delete({
       where: {
