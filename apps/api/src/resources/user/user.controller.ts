@@ -5,6 +5,8 @@ import { JwtAuthGuard } from '@resources/auth/guards/jwt-auth.guard';
 import type { AuthUser } from '@resources/auth/types/auth-user.type';
 import { ConfirmEmailDTO } from './dtos/confirm-email.dto';
 import { CreateUserDTO } from './dtos/create-user.dto';
+import { ForgotPasswordDTO } from './dtos/forgot-password.dto';
+import { ResetPasswordDTO } from './dtos/reset-password.dto';
 import { UpdateUserDTO } from './dtos/update-user.dto';
 import { UserResponseDTO } from './dtos/user-response.dto';
 import { UserService } from './user.service';
@@ -22,6 +24,16 @@ export class UserController {
   @Post('confirm-email')
   confirmEmail(@Body() body: ConfirmEmailDTO) {
     return this.userService.confirmEmail(body.token);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() body: ForgotPasswordDTO) {
+    return this.userService.forgotPassword(body.email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() body: ResetPasswordDTO) {
+    return this.userService.resetPassword(body.token, body.password);
   }
 
   @ApiBearerAuth()

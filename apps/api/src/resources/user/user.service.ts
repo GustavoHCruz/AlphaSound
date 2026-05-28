@@ -68,6 +68,68 @@ export class UserService {
     return true;
   }
 
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return true;
+    }
+
+    const token = randomBytes(32).toString('hex');
+
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        passwordResetToken: token,
+        passwordResetExpiresAt: new Date(Date.now() + 1000 * 60 * 15),
+      },
+    });
+
+    await this.mailService.sendForgotPasswordEmail(user.email, token);
+
+    return true;
+  }
+
+  async resetPassword(token: string, password: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        passwordResetToken: token,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid Token');
+    }
+
+    if (
+      !user.passwordResetExpiresAt ||
+      user.passwordResetExpiresAt < new Date()
+    ) {
+      throw new BadRequestException('Expired token');
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetExpiresAt: null,
+      },
+    });
+
+    return true;
+  }
+
   findAll() {
     return this.prisma.user.findMany({
       include: {
