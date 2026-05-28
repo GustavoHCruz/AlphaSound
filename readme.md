@@ -35,10 +35,16 @@ uvicorn src.main:app --reload --port 8080
 Setup the enviroment file (`.env`):
 
 ```bash
-PORT=8000
+PORT=8080
 JWT_SECRET=your-jwt-secret
-DATABASE_URL=file:db.sqlite						# sqlite file
+DATABASE_URL=file:db.sqlite
+
 TRANSCRIBER_API_URL=http://localhost:8080
+FRONTEND_URL=http://localhost:3000
+
+SMTP_USER=your_gmail@gmail.com
+SMTP_PASS=your_app_password
+MAIL_FROM="AlphaSound <your_gmail>"
 ```
 
 Then, you may install the dependencies:
