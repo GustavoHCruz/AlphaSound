@@ -65,6 +65,10 @@ export class UploadController {
     @GetUser() user: AuthUser,
     @Body() data: UploadAudioDTO,
   ) {
+    if (!file.mimetype.startsWith('audio/')) {
+      throw new BadRequestException('Only audio files are allowed');
+    }
+
     if (!file?.path) {
       throw new BadRequestException('File upload failed');
     }
@@ -76,7 +80,7 @@ export class UploadController {
     );
 
     return {
-      status: "success",
+      status: 'success',
       code: 201,
       data: {
         sessionId: session.id,
