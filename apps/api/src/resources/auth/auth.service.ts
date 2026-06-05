@@ -17,7 +17,9 @@ export class AuthService {
     }
 
     if (!user.emailVerified) {
-      throw new UnauthorizedException('You need to verify your account first');
+      throw new UnauthorizedException(
+        'Please check your email to confirm your account.',
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);

@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const [dragActive, setDragActive] = useState(false);
   const [sessions, setSessions] = useState<AudioSession[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
-    null
+    null,
   );
   const [segments, setSegments] = useState<AudioSegment[]>([]);
   const [showUpload, setShowUpload] = useState(true);
@@ -104,8 +104,8 @@ export default function DashboardPage() {
               ...segment,
               text,
             }
-          : segment
-      )
+          : segment,
+      ),
     );
 
     try {
@@ -120,8 +120,8 @@ export default function DashboardPage() {
               ...session,
               name,
             }
-          : session
-      )
+          : session,
+      ),
     );
 
     try {
@@ -154,7 +154,7 @@ export default function DashboardPage() {
   };
   const onLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    window.location.href = "/auth";
   };
 
   useEffect(() => {
@@ -189,7 +189,7 @@ export default function DashboardPage() {
   }, []);
 
   const selectedSession = sessions.find(
-    (session) => session.id === selectedSessionId
+    (session) => session.id === selectedSessionId,
   );
 
   return (

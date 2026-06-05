@@ -35,7 +35,7 @@ uvicorn src.main:app --reload --port 8080
 Setup the enviroment file (`.env`):
 
 ```bash
-PORT=8080
+PORT=8000
 JWT_SECRET=your-jwt-secret
 DATABASE_URL=file:db.sqlite
 

@@ -35,7 +35,8 @@ export class MailService {
 
   async sendConfirmEmail(email: string, token: string) {
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    const url = `${frontendUrl}/confirm-email?token=${token}`;
+
+    const url = `${frontendUrl}/auth/confirm-email/${token}`;
 
     await this.sendMail({
       to: email,
@@ -46,7 +47,8 @@ export class MailService {
 
   async sendForgotPasswordEmail(email: string, token: string) {
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    const url = `${frontendUrl}/reset-password?token=${token}`;
+
+    const url = `${frontendUrl}/auth/reset-password/${token}`;
 
     await this.sendMail({
       to: email,

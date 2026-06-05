@@ -8,7 +8,7 @@ export function useRequireAuth() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.replace("/login");
+      router.replace("/auth");
     }
   }, [router]);
 }

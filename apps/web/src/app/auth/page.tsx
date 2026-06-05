@@ -104,7 +104,7 @@ export default function LoginPage() {
         setError(message);
       } else {
         setError(
-          isSignUp ? "Could not create account." : "Could not authenticate."
+          isSignUp ? "Could not create account." : "Could not authenticate.",
         );
       }
     } finally {
@@ -200,6 +200,18 @@ export default function LoginPage() {
                 fullWidth
               />
 
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => router.push("/auth/forgot-password")}
+                sx={{
+                  alignSelf: "flex-end",
+                  textTransform: "none",
+                }}
+              >
+                Forgot password?
+              </Button>
+
               {error ? <Alert severity="error">{error}</Alert> : null}
               {success ? <Alert severity="success">{success}</Alert> : null}
 
@@ -227,8 +239,8 @@ export default function LoginPage() {
                     ? "Creating account..."
                     : "Authenticating..."
                   : isSignUp
-                  ? "Sign up"
-                  : "Log in"}
+                    ? "Sign up"
+                    : "Log in"}
               </Button>
 
               <Button
