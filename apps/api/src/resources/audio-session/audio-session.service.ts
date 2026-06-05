@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AudioSessionStatus } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { AudioSegmentService } from '@resources/audio-segment/audio-segment.service';
@@ -13,9 +14,10 @@ export class AudioSessionService {
   private readonly logger = new Logger(AudioSessionService.name);
 
   constructor(
-    private prisma: PrismaService,
-    private http: HttpService,
     private audioSegmentService: AudioSegmentService,
+    private configService: ConfigService,
+    private http: HttpService,
+    private prisma: PrismaService,
   ) {}
 
   async create(data: CreateAudioSessionDTO) {
@@ -142,7 +144,7 @@ export class AudioSessionService {
     audioPath: string,
     audioMinimalSize?: number,
   ) {
-    const baseUrl = process.env.TRANSCRIBER_API_URL;
+    const baseUrl = this.configService.get<string>('TRANSCRIBER_API_URL');
 
     const fileBuffer = readFileSync(audioPath);
     const audioBase64 = fileBuffer.toString('base64');
