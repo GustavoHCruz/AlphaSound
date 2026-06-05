@@ -1,5 +1,5 @@
 import { uploadAudio } from "@/src/services/upload.service";
-import { isValidMp3 } from "@/src/utils/file";
+import { isValidAudio } from "@/src/utils/file";
 import { useState } from "react";
 
 interface Props {
@@ -14,8 +14,8 @@ export function useAudioUpload({ onUploaded }: Props) {
   const uploadFile = async (file?: File) => {
     if (!file) return;
 
-    if (!isValidMp3(file)) {
-      setError("Only MP3 files are allowed.");
+    if (!isValidAudio(file)) {
+      setError("Only audio files are allowed.");
 
       return;
     }

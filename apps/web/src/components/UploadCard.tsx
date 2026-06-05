@@ -72,7 +72,7 @@ export default function UploadCard({
           hidden
           ref={fileInputRef}
           type="file"
-          accept=".mp3,audio/mpeg"
+          accept="audio/mpeg, audio/wav, audio/x-wav, audio/mp4, audio/aac, audio/flac, audio/ogg, audio/webm"
           onChange={onUpload}
         />
         {error && <Alert severity="error">{error}</Alert>}

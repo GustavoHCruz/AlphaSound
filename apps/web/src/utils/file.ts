@@ -1,3 +1,7 @@
-export function isValidMp3(file: File) {
-  return file.type === "audio/mpeg" || file.name.toLowerCase().endsWith(".mp3");
+export function isValidAudio(file: File) {
+  if (!file.type) {
+    return false;
+  }
+
+  return file.type.startsWith("audio/");
 }
