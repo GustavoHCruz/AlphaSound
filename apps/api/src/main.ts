@@ -22,16 +22,16 @@ async function bootstrap() {
         return;
       }
 
-      const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(
-        origin,
-      );
+      if (process.env.NODE_ENV !== 'production') {
+        callback(null, true);
+        return;
+      }
 
-      callback(null, isLocalhost);
+      const allowedOrigins = [process.env.FRONTEND_URL];
+
+      callback(null, allowedOrigins.includes(origin));
     },
     credentials: true,
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    optionsSuccessStatus: 204,
   });
 
   app.useGlobalPipes(

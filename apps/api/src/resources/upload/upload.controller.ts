@@ -65,8 +65,11 @@ export class UploadController {
     @GetUser() user: AuthUser,
     @Body() data: UploadAudioDTO,
   ) {
-    if (!file.mimetype.startsWith('audio/')) {
-      throw new BadRequestException('Only audio files are allowed');
+    const isAudio = file.mimetype.startsWith('audio/');
+    const isVideo = file.mimetype.startsWith('video/');
+
+    if (!isAudio && !isVideo) {
+      throw new BadRequestException('Only audio and video files are allowed');
     }
 
     if (!file?.path) {

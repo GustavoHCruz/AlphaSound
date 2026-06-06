@@ -3,5 +3,5 @@ export function isValidAudio(file: File) {
     return false;
   }
 
-  return file.type.startsWith("audio/");
+  return file.type.startsWith("audio/") || file.type.startsWith("video/");
 }
