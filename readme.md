@@ -17,7 +17,7 @@ Setup the enviroment file (`.env`):
 ```bash
 WHISPER_MODEL_SIZE=			# small | medium | large
 WHISPER_DEVICE=				# cuda | cpu
-LANGUAGE=						# en | pt | fr | es
+LANGUAGE=					# en | pt | fr | es
 ```
 
 Then, install the dependencies and run the application:
@@ -25,7 +25,7 @@ Then, install the dependencies and run the application:
 ```bash
 cd transcriber
 pip install -r requirements.txt
-uvicorn src.main:app --reload --port 8080
+uvicorn src.main:app --port 8080
 ```
 
 ---
@@ -58,7 +58,7 @@ Create the database:
 
 ```bash
 npx prisma migrate dev
-npm run start:dev
+npm run start
 ```
 
 ---

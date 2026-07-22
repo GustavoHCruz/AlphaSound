@@ -15,6 +15,10 @@ async function bootstrap() {
         : ['log', 'error', 'warn', 'debug', 'verbose'],
   });
 
+  app.getHttpAdapter().get('/', (_, res) => {
+    res.redirect('/docs');
+  });
+
   app.enableCors({
     origin: (origin, callback) => {
       if (!origin) {

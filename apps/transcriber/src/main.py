@@ -1,9 +1,14 @@
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse
+from fastapi.responses import RedirectResponse, StreamingResponse
 from src.models import TranscribeRequest
 from src.service import generate_segments, save_temp_audio, transcribe_audio
 
 app = FastAPI()
+
+
+@app.get("/")
+def root() -> RedirectResponse:
+    return RedirectResponse(url="/docs")
 
 
 @app.post("/transcribe")

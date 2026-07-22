@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 from typing import Iterator
 
+import torch
 from dotenv import load_dotenv
 from faster_whisper import WhisperModel
 from src.models import TranscriptionSegment
@@ -19,10 +20,10 @@ MODEL_MAP = {"large": "large-v3", "medium": "medium", "small": "small"}
 
 model_name = MODEL_MAP.get(MODEL_SIZE, "large-v3")
 
-if DEVICE == "cuda":
-    compute_type = "float16"
-else:
-    compute_type = "int8"
+if DEVICE == "cuda" and not torch.cuda.is_available():
+    print("CUDA requested but unavailable. Falling back to CPU.")
+    DEVICE = "cpu"
+compute_type = "float16" if DEVICE == "cuda" else "int8"
 
 model = WhisperModel(model_name, device=DEVICE, compute_type=compute_type)
 
